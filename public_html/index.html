@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--
+[logo:center]
+[empty space]
+[panel align-right: leaderboard+help]
+[board:center]
+[settings+commands panel]
+[size:dropdown | vs: dropdown | first: dropdown | dificulty: dropdown | start:button]
+-->
+<html>
+
+  <head>
+    <title>"Connect-4"</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+  </head>
+
+  <body>
+    
+    <div class="header">
+      <h1> Connect 4</h1>
+    </div>
+
+    <div class="gamearea">
+
+      <div class="top-panel">
+        <div class="help" display=none>
+        </div>
+        <div class="score" display=none>
+        </div>
+      </div>
+
+      <div class="board">
+      </div>
+
+      <div class="bottom-panel">
+        
+        <div class="pre-game">
+        
+          <select class="board-size">
+            <option value=1>7x6</option>
+          </select>
+        
+          <select class="versus">
+            <option value=1>Versus AI</option>
+            <option value=2>Versus Player</option>
+          </select>
+        
+          <select class="first-player">
+            <option value=1>Red</option>
+            <option value=2>Yellow</option>
+          </select>
+        
+          <select class="difficulty">
+            <option value=2>Easy</option>
+            <option value=5>Normal</option>
+            <option value=8>Hard</option>
+          </select>
+        
+          <button>Start</button>
+        
+        </div>
+        
+        <div class="during-game" display=none>
+          <button>Give up</button>
+        </div>
+
+      </div>
+
+    </div>
+  </body>
+
+</html>
