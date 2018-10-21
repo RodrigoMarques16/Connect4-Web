@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="description" content="Customizable Four in a Row game with pass-and-play.">
+	<meta name="author" content="Jason O'Neill">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	
+	<meta property="og:title" content="Four in a Row">
+	<meta property="og:url" content="https://creativetechguy.com/fourinarow">
+	<meta property="og:description" content="Customizable Four in a Row game with pass-and-play.">
+	<meta property="og:image" content="https://creativetechguy.com/fourinarowfiles/fourinarowicon.png">
+
+    <title>Four in a Row</title>
+    	
+	<script src="fourinarowfiles/fourinarow.js?v=1499273042"></script>
+	<link rel="stylesheet" href="fourinarowfiles/fourinarow.css?v=1498354261" type="text/css">
+	<link rel="stylesheet" href="globals/css/scrollbars.css?v=1526253339" type="text/css">
+</head>
+<body>
+	<div id="status"></div>
+	<div id="game"></div>
+	<div id="footer">
+		<button id="reset">Restart Game</button><br>
+		<button id="resizeCells">Resize Board to Fit Screen</button>
+	</div>
+	<div id="settings">
+	<br>
+	<div class="heading"><a id="toggleSettings">Settings</a></div>
+		<table id="settingsCollapsable" style="display: none;">
+			<tr><td>Board Width:<td><input id="boardWidth" type="number" class="number-input" /></td></tr>
+			<tr><td>Board Height:<td><input id="boardHeight" type="number" class="number-input" /></td></tr>
+			<tr><td>Length Needed:<td><input id="lengthNeeded" type="number" class="number-input" /></td></tr>
+			<tr><td>Animation Gravity:<td><input id="gravity" type="number" class="number-input" /></td></tr>
+			<tr><td>Player 1 Color:<td><input id="player1Color" type="color" class="color-input" /></td></tr>
+			<tr><td>Player 2 Color:<td><input id="player2Color" type="color" class="color-input" /></td></tr>
+			<tr><td>Win Color:<td><input id="winColor" type="color" class="color-input" /></td></tr>
+			<tr><td colspan="2"><button id="applySettings">Apply</button></td></tr>
+			<tr><td colspan="2"><button id="resetSettings">Reset</button></td></tr>
+		</table>
+	</div>
+</body>
+</html>
