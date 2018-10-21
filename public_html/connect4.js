@@ -1,19 +1,30 @@
-;function login() {
+gameStarted = false;
+
+function login() {
     // Login details aren't saved yet
-    var form = document.getElementById("login");
-    if (form.style.display === "none") {
-        form.style.display = "block";
-    } else {
-        form.style.display = "none";
-    }
+    var login_div = document.getElementById("login");
+    var game_div  = document.getElementById("game");
+
+    login_div.style.display = "none"; 
+    game_div.style.display  = "block";
+ 
 }
 
 function connect4(width, height) {
+
+    if (gameStarted)
+        return;
+
+    gameStarted = true;
+
     var base = document.getElementById("tabuleiro");
     var pilha = document.getElementById("pilha");
     var slot = document.getElementById("vazio");
-    
-    
+    var board = document.getElementById("board");
+
+    board.width = width * 25;
+    board.height = height * 25;
+
     for(i = 0; i < height; i++) {
         var s = slot.cloneNode(false);
         pilha.appendChild(s);
@@ -22,4 +33,5 @@ function connect4(width, height) {
         var p = pilha.cloneNode(true);
         base.appendChild(p);
     }
+
 }
