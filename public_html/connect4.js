@@ -2,10 +2,10 @@ gameStarted = false;
 
 function login() {
     // Login details aren't saved yet
-    var login_div = document.getElementById("login");
+    var login_section = document.getElementById("login-section");
     var game_div  = document.getElementById("game");
 
-    login_div.style.display = "none"; 
+    login_section.style.display = "none"; 
     game_div.style.display  = "block";
  
 }
