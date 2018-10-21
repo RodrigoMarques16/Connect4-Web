@@ -1,27 +1,33 @@
 <!DOCTYPE html>
-<!--
-[logo:center]
-[empty space]
-[panel align-right: leaderboard+help]
-[board:center]
-[settings+commands panel]
-[size:dropdown | vs: dropdown | first: dropdown | dificulty: dropdown | start:button]
--->
+
 <html>
 
   <head>
     <title>"Connect-4"</title>
     <link rel="stylesheet" href="style.css" type="text/css">
+    <script src="connect4.js"> </script>
   </head>
 
   <body>
-    
+
     <div class="header">
       <h1> Connect 4</h1>
+      <hr>
     </div>
-
-    <div class="gamearea">
-
+    
+    <div class="login" id="login">
+      <label for="username">Username: </label>
+      <input type="text" name="username" />
+      <br>
+      <label for="password">Password: </label>
+      <input type="text" name="password" />
+      <br>
+      <br>
+      <input type="button" value="Login" onclick="login()">
+    </div>
+    
+    <!--
+    <div id="game=area">
       <div class="top-panel">
         <div class="help" display=none>
         </div>
@@ -29,37 +35,43 @@
         </div>
       </div>
 
-      <div class="board">
+      <div class="tabuleiro" id="tabuleiro">
+        <div class="pilha" id="pilha">
+          <div class="vazio" id="vazio"></div>
+        </div>
+
       </div>
 
+      <hr>
+
       <div class="bottom-panel">
-        
+
         <div class="pre-game">
-        
+
           <select class="board-size">
             <option value=1>7x6</option>
           </select>
-        
+
           <select class="versus">
             <option value=1>Versus AI</option>
             <option value=2>Versus Player</option>
           </select>
-        
+
           <select class="first-player">
             <option value=1>Red</option>
             <option value=2>Yellow</option>
           </select>
-        
+
           <select class="difficulty">
             <option value=2>Easy</option>
             <option value=5>Normal</option>
             <option value=8>Hard</option>
           </select>
-        
-          <button>Start</button>
-        
+
+          <button onclick="connect4(6,7)">Start</button>
+
         </div>
-        
+
         <div class="during-game" display=none>
           <button>Give up</button>
         </div>
@@ -67,6 +79,7 @@
       </div>
 
     </div>
+  -->
   </body>
 
 </html>
