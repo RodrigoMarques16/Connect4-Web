@@ -21,10 +21,10 @@
         <div class="login-area">
             <h1> Connect 4</h1>
             <div class="login-form">
-                <input type="text" placeholder="username" />
-                <input type="password" placeholder="password" />
-                <button class="login-button" onclick="login()">login</button>
-                <button class="register-button">register</button>
+                <input  id="username-box" type="text" placeholder="username"/>
+                <input  id="password-box" type="password" placeholder="password"/>
+                <button id="login-button">login</button>
+                <button id="register-button">register</button>
             </div>
         </div>
     </section>
@@ -42,22 +42,22 @@
             </select></td></tr>
             <tr><td>Difficulty:<td><select id="difficulty" class="input-select">
                 <option value=2>Easy</option>
-                <option value=5 selected>Normal</option>
+                <option value=5>Normal</option>
                 <option value=8>Hard</option>
             </select></td></tr>
             <tr><td colspan="2"><button id="playGame" class="input-button">Play</button></td></tr>
             <tr><td colspan="2"><button id="resetSettings" class="input-button">Reset</button></td></tr>
+            <tr><td colspan="2"><button id="scoreboard" class="input-button">Scoreboard</button></td></tr>
+            <tr><td colspan="2"><button id="help" class="input-button">Help</button></td></tr>
         </table>
     </section>
 
     <!-------------------------------------------------------
-    --- GAME .-----------------------------------------------
+    --- GAME ------------------------------------------------
     -------------------------------------------------------->
-    <main>
-        <div id="board">
+    <div id="board">
 
-        </div>
-    </main>
+    </div>
 
     <!--
   <div class="game" id="game">

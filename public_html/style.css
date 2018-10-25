@@ -6,17 +6,6 @@ body {
     background-color: rgba(141, 194, 111, 0.5); 
 }
 
-.side-bar {
-    width: 15%;
-}
-
-.input-number, .input-select {
-    width: 75px;
-}
-.input-button {
-    width: 100%;
-}
-
 .board {
     width: auto;
     margin: auto;
@@ -58,9 +47,33 @@ body {
     box-shadow: 0px 0px 20px 8px cyan;
 }
 
-/*****************************
-* LOGIN
-******************************/
+/****************************
+ * GAME
+ ***************************/
+
+ table {
+     margin: auto;
+ }
+
+/****************************
+ * SIDE BAR
+ ***************************/
+.side-bar {
+    display: none;
+    width: 15%;
+}
+
+.input-number, .input-select {
+    width: 75px;
+}
+
+.input-button {
+    width: 100%;
+}
+
+/****************************
+ * LOGIN
+ ***************************/
 #login-section {
     position: absolute;
     top:0;
@@ -126,10 +139,10 @@ body {
   background: #43A047;
 }
 
-.login-form .login-button {
+#login-button {
     float: left;
 }
 
-.login-form .register-button {
+#register-button {
     float: right;
 }
