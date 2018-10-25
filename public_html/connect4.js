@@ -180,32 +180,48 @@ window.onload = function () {
     }
 
     function checkWin(x, y) {
-        return (checkHorizontal(x,y)) 
-            || (checkVertical(x,y))
+        return (checkHorizontal(y)) 
+            || (checkVertical(x))
             || (checkLDiagonal(x,y))
             || (checkRDiagonal(x,y));
     }
 
-    function checkHorizontal(x,y) {
-        let i = clamp(x, 0, x-4);
-        let j = clamp(x, x+4, settings.boardWidth);
-        console.log("range",i,j);
+    function checkHorizontal(y) {
         let win = 0;
-        for(; i < j; i++) {
-            console.log("infor",i,y,status.board[i][y]);
+        for(let i = 0; i < settings.boardWidth; i++) {
             if (status.board[i][y] == status.player)
                 win++;
-            else win = 0;
-            if (win >= 4) return true;
+            else 
+                win = 0;
+            if (win >= 4) 
+                return true;
         }
         return false;
     }
-    function checkVertical(x,y) {
-        return false;
+
+    function checkVertical(x) {
+        let win = 0;
+        for(let i = 0; i < settings.boardHeight; i++) {
+            if (status.board[x][i] == status.player)
+                win++;
+            else 
+                win = 0;
+            if (win >= 4) 
+                return true;
+        }
+        return false;     
     }
 
     function checkLDiagonal(x,y) {
-        return false;
+        // x from 0 to width-4
+        // y from 0 to width+4
+        let win = 0;
+        for(let i = 0; i < settings.boardWidth-4; i++) {
+            for(let j = 0; j < settings.boardHeight-4; j++) {
+            
+            }
+        }
+        return false;   
     }
 
     function checkRDiagonal(x,y) {
