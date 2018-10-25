@@ -6,12 +6,6 @@ body {
     background-color: rgba(141, 194, 111, 0.5); 
 }
 
-.board {
-    width: auto;
-    margin: auto;
-    background: blue;
-}
-
 .pilha {
     display: inline-block;
     width: 50px;
@@ -19,19 +13,6 @@ body {
     margin: 1px;
     border-width: 1px;
     border-style: dotted;
-}
-
-.eu,
-.ele,
-.vazio {
-    width: 40px;
-    height: 40px;
-    margin: 5px;
-    border-width: 0px;
-    border-radius: 20px;
-    border-width: 1px;
-    border-style: solid;
-    background: white;
 }
 
 .eu {
@@ -50,10 +31,33 @@ body {
 /****************************
  * GAME
  ***************************/
+#board {
+    position: fixed;
+    display: none;
+    top: 10px;
+    margin-left: auto;
+}
 
- table {
-     margin: auto;
- }
+#board table {
+    background: blue;
+    margin: auto;
+}
+
+#board td, #board tr, #board table{
+	border: 1px solid;
+	border-collapse: collapse;
+}
+
+#board td {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    border-width: 0px;
+    border-radius: 20px;
+    border-width: 1px;
+    border-style: solid;
+    background: white;
+}
 
 /****************************
  * SIDE BAR

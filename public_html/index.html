@@ -1,118 +1,56 @@
 <!DOCTYPE html>
 
 <html>
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>"Connect 4 Game"</title>
+  <title>"Connect 4 Game"</title>
 
-    <link rel="stylesheet" href="style.css" type="text/css">
-    <script src="connect4.js"> </script>
+  <link rel="stylesheet" href="style.css" type="text/css">
+  <script src="connect4.js"> </script>
 </head>
-
 <body>
-
-    <!-------------------------------------------------------
-    --- LOGIN -----------------------------------------------
-    -------------------------------------------------------->
-    <section id="login-section">
-        <div class="login-area">
-            <h1> Connect 4</h1>
-            <div class="login-form">
-                <input  id="username-box" type="text" placeholder="username"/>
-                <input  id="password-box" type="password" placeholder="password"/>
-                <button id="login-button">login</button>
-                <button id="register-button">register</button>
-            </div>
-        </div>
-    </section>
-
-    <!-------------------------------------------------------
-    --- SETTINGS --------------------------------------------
-    -------------------------------------------------------->
-    <section id="side" class="side-bar">
-        <table id="settings">
-            <tr><td>Board Width:<td><input id="boardWidth" type="number" class="input-number"/></td></tr>
-            <tr><td>Board Height:<td><input id="boardHeight" type="number" class="input-number"/></td></tr>
-            <tr><td>First Player:<td><select id="firstPlayer" class="input-select">
-                <option value=1 selected>1</option>
-                <option value=2>2</option>
-            </select></td></tr>
-            <tr><td>Difficulty:<td><select id="difficulty" class="input-select">
-                <option value=2>Easy</option>
-                <option value=5>Normal</option>
-                <option value=8>Hard</option>
-            </select></td></tr>
-            <tr><td colspan="2"><button id="playGame" class="input-button">Play</button></td></tr>
-            <tr><td colspan="2"><button id="resetSettings" class="input-button">Reset</button></td></tr>
-            <tr><td colspan="2"><button id="scoreboard" class="input-button">Scoreboard</button></td></tr>
-            <tr><td colspan="2"><button id="help" class="input-button">Help</button></td></tr>
-        </table>
-    </section>
-
-    <!-------------------------------------------------------
-    --- GAME ------------------------------------------------
-    -------------------------------------------------------->
-    <div id="board">
-
-    </div>
-
-    <!--
-  <div class="game" id="game">
-
-    <div class="top-panel">
-      <div class="help" display=none>
-      </div>
-      <div class="score" display=none>
+  <!-------------------------------------------------------
+  --- LOGIN -----------------------------------------------
+  -------------------------------------------------------->
+  <section id="login-section">
+    <div class="login-area">
+      <h1> Connect 4</h1>
+      <div class="login-form">
+        <input  id="username-box" type="text" placeholder="username"/>
+        <input  id="password-box" type="password" placeholder="password"/>
+        <button id="login-button">login</button>
+        <button id="register-button">register</button>
       </div>
     </div>
+  </section>
+  <!-------------------------------------------------------
+  --- SETTINGS --------------------------------------------
+  -------------------------------------------------------->
+  <section id="side" class="side-bar">
+    <table id="settings">
+      <tr><td>Board Width:<td><input id="boardWidth" type="number" class="input-number"/></td></tr>
+      <tr><td>Board Height:<td><input id="boardHeight" type="number" class="input-number"/></td></tr>
+      <tr><td>First Player:<td><select id="firstPlayer" class="input-select">
+        <option value=1 selected>1</option>
+        <option value=2>2</option>
+      </select></td></tr>
+      <tr><td>Difficulty:<td><select id="difficulty" class="input-select">
+      <option value=2>Easy</option>
+      <option value=5>Normal</option>
+      <option value=8>Hard</option>
+      </select></td></tr>
+      <tr><td colspan="2"><button id="playGame" class="input-button">Play</button></td></tr>
+      <tr><td colspan="2"><button id="resetSettings" class="input-button">Reset</button></td></tr>
+      <tr><td colspan="2"><button id="scoreboard" class="input-button">Scoreboard</button></td></tr>
+      <tr><td colspan="2"><button id="help" class="input-button">Help</button></td></tr>
+    </table>
+  </section>
+  <!-------------------------------------------------------
+  --- GAME ------------------------------------------------
+ -------------------------------------------------------->
+ <div id="board"></div>
 
-    <div class="board" id="board">
-      <div class="pilha" id="pilha">
-        <div class="vazio" id="vazio"></div>
-      </div>
-    </div>
-
-    <hr>
-
-    <div class="bottom-panel">
-
-      <div class="pre-game">
-
-        <select class="board-size">
-          <option value=1>7x6</option>
-        </select>
-
-        <select class="versus">
-          <option value=1>Versus AI</option>
-          <option value=2>Versus Player</option>
-        </select>
-
-        <select class="first-player">
-          <option value=1>Red</option>
-          <option value=2>Yellow</option>
-        </select>
-
-        <select class="difficulty">
-          <option value=2>Easy</option>
-          <option value=5>Normal</option>
-          <option value=8>Hard</option>
-        </select>
-
-        <button onclick="connect4(6,7)">Start</button>
-
-      </div>
-
-      <div class="during-game" display=none>
-        <button>Give up</button>
-      </div>
-
-    </div>
-
-  </div>
-  -->
 </body>
-
 </html>

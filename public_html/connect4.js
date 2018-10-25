@@ -23,7 +23,7 @@ window.onload = function () {
         board: [],
         player: 1,
         gameStarted: false,
-        totalPIeces: 0,
+        totalPieces: 0,
     };
 
     loadSettings(defaults);
@@ -59,6 +59,8 @@ window.onload = function () {
 
             loadSettings(settings);
             clearBoard();
+            createBoard();
+            play();
         }
         
         document.getElementById("resetSettings").onclick = function() {
@@ -122,34 +124,34 @@ window.onload = function () {
         }
 
         board.appendChild(table);
+        resizeCells();
+    }
+
+    function resizeCells(){
+		var windowWidth = window.innerWidth-status.board.length*3;
+		var windowHeight = window.innerHeight-75-status.board[0].length*3;
+		var w = Math.ceil(windowWidth / status.board.length);
+		var h = Math.ceil(windowHeight / status.board[0].length);
+		var shorterSide = (w < h ? w : h);
+		var cells = document.getElementById("board").getElementsByTagName("td");
+		for (var i = 0; i < cells.length; i++){
+			cells[i].style.width = shorterSide+"px";
+			cells[i].style.height = shorterSide+"px";
+		}
+		styleTokens();
+	}
+
+    function initGame() {
+        status.totalPieces = 0;
+        status.board = [];
+        status.player = settings.firstPlayer;
         status.gameStarted = true;
     }
 
-
-    /*function connect4(width, height) {
-    
-        if (gameStarted)
-            return;
-    
-        gameStarted = true;
-    
-        var base = document.getElementById("tabuleiro");
-        var pilha = document.getElementById("pilha");
-        var slot = document.getElementById("vazio");
-        var board = document.getElementById("board");
-    
-        board.width = width * 25;
-        board.height = height * 25;
-    
-        for(i = 0; i < height; i++) {
-            var s = slot.cloneNode(false);
-            pilha.appendChild(s);
-        }
-        for(i = 0; i < width; i++) {
-            var p = pilha.cloneNode(true);
-            base.appendChild(p);
-        }
-    }*/
+    function play() {
+        initGame();
+        
+    }
     
     function clamp(x, min, max) {
         return Math.max(min, Math.min(x, max));
