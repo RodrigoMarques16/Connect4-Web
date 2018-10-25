@@ -1,3 +1,10 @@
+/*
+for(let i = 0; i < height; i++) {
+    for (let j = 0; j < width; j++) {
+        console.log(cells[j+","+i]);
+    }
+}*/
+
 window.onload = function () {
 
     var defaults = {
@@ -5,46 +12,39 @@ window.onload = function () {
         boardHeight: 6,
         firstPlayer: 1,
         difficulty: 5,
-		playerColors: [
-			"#FF0000",
-			"#0000FF"
-		],
-		winColor: "#FFFF00",
     }
 
     var settings = {
-		boardWidth: 7,
+        boardWidth: 7,
         boardHeight: 6,
         firstPlayer: 1,
         difficulty: 5,
-	};
+    };
 
     var status = {
-        board: [],
+        board: new Array(),
+        columnHeight: new Array(),
         player: 1,
-        gameStarted: false,
+        active: false,
         totalPieces: 0,
     };
+
+    var colors = ["red","yellow"];
 
     loadSettings(defaults);
     init();
     createBoard(settings.boardWidth, settings.boardHeight);   
+    play();
 
     function init() {
         // TODO: seperate functions 
 
         document.getElementById("login-button").onclick = function() {
-            
             let username = document.getElementById("username-box").value;
-            let password = document.getElementById("password-box").value;
-
-            // verification not implemente yet 
-
+            let password = document.getElementById("password-box").value; 
             let login    = document.getElementById("login-section");
             let settings = document.getElementById("side");
             let game     = document.getElementById("board");
-            
-
             login.style.display = "none"; 
             settings.style.display = "block"
             game.style.display  = "block";
@@ -56,10 +56,9 @@ window.onload = function () {
             settings.boardHeight = clamp(parseInt(document.getElementById("boardHeight").value), 1, 10);
             settings.firstPlayer = parseInt(document.getElementById("firstPlayer").value);
             settings.difficulty  = parseInt(document.getElementById("difficulty").value);
-
             loadSettings(settings);
             clearBoard();
-            createBoard();
+            createBoard(settings.boardWidth, settings.boardHeight);
             play();
         }
         
@@ -77,82 +76,152 @@ window.onload = function () {
     }
     
     function clearBoard() {
-        status.board = [];
+        document.getElementById("board").innerHTML = "";
+        status.board = new Array();
+        status.columnHeight = new Array();
+        cells = {};
     }
 
     function createBoard(width, height) {
         let board = document.getElementById("board");
-
         let table = document.createElement("table");
+        
+        clearBoard();
 
         // Initialize game board
-        for(let i = 0; i < width; i++) {
-            let column = [];
-            for (let j = 0; j < height; j++) {
-				column.push(0);
+        for(let x = 0; x < width; x++) {
+            status.columnHeight[x] = 0;
+            status.board[x] = new Array();
+            for (let y = 0; y < height; y++) {
+				status.board[x].push(0);
 			}
-			status.board.push(column);
         }
 
         // Create HTML board
-        for(let i = 0; i < height; i++) {
+        for(let y = 0; y < height; y++) {
             let tr = document.createElement("tr");
-			for (let j = 0; j < width; j++){
+			for (let x = 0; x < width; x++) {
 				let td = document.createElement("td");
-				tr.appendChild(td);
+                tr.appendChild(td);
+                cells[x+","+(settings.boardHeight-1-y)] = td;
 			}
 			table.appendChild(tr);
         }
 
         // Events
-        
         table.onclick = function(e){
 			columnDrop(e.target.cellIndex);
 			e.preventDefault();
         }
-        
+        /*
         table.onmouseover = function(e) {
             unhighlightColumn();
-            highlightColumn(e.target.cellIndex)
-            e.preventDefault
+            highlightColumn(e.target);
+            e.preventDefault();
         }
 
         table.onmouseleave = function(e) {
             unhighlightColumn();
             highlightColumn(e.target.cellIndex)
-            e.preventDefault
-        }
+            e.preventDefault();
+        }*/
 
         board.appendChild(table);
         resizeCells();
     }
 
     function resizeCells(){
-		var windowWidth = window.innerWidth-status.board.length*3;
-		var windowHeight = window.innerHeight-75-status.board[0].length*3;
-		var w = Math.ceil(windowWidth / status.board.length);
-		var h = Math.ceil(windowHeight / status.board[0].length);
-		var shorterSide = (w < h ? w : h);
-		var cells = document.getElementById("board").getElementsByTagName("td");
-		for (var i = 0; i < cells.length; i++){
-			cells[i].style.width = shorterSide+"px";
-			cells[i].style.height = shorterSide+"px";
-		}
-		styleTokens();
-	}
+        let windowWidth  = window.innerWidth;
+        let windowHeight = window.innerHeight - 75; // hacks
+
+        // Cells need to be sized relative to the smallest space available
+		let w = Math.ceil(windowWidth / settings.boardWidth);
+		let h = Math.ceil(windowHeight / settings.boardHeight);
+        let size = (w < h ? w : h);
+
+		let cells = document.getElementById("board").getElementsByTagName("td");
+        for(let i = 0; i < cells.length; i++){
+			cells[i].style.width        = size+"px";
+            cells[i].style.height       = size+"px";
+            cells[i].style.borderRadius = size+"px";
+        }
+	}      
+
+    function columnDrop(c) {
+        //console.log("Column " + c);
+        
+        if (!status.active) {
+            return false;
+        }
+        
+		if (status.columnHeight[c] == settings.boardHeight) {
+            return false;
+        }
+        
+        status.active = false;
+
+        let y = status.columnHeight[c];
+        let key = c + "," + y
+
+        cells[key].style.background = colors[status.player-1];
+        status.board[c][y] = status.player;
+
+        status.columnHeight[c]++;
+        status.totalPieces++;
+
+        console.log(checkWin(c,y));
+        changePlayer();
+
+        status.active = true;
+    }
+
+    function changePlayer() {
+        status.player = (status.player == 1 ? 2 : 1);
+    }
+
+    function checkWin(x, y) {
+        return (checkHorizontal(x,y)) 
+            || (checkVertical(x,y))
+            || (checkLDiagonal(x,y))
+            || (checkRDiagonal(x,y));
+    }
+
+    function checkHorizontal(x,y) {
+        let i = clamp(x, 0, x-4);
+        let j = clamp(x, x+4, settings.boardWidth);
+        console.log("range",i,j);
+        let win = 0;
+        for(; i < j; i++) {
+            console.log("infor",i,y,status.board[i][y]);
+            if (status.board[i][y] == status.player)
+                win++;
+            else win = 0;
+            if (win >= 4) return true;
+        }
+        return false;
+    }
+    function checkVertical(x,y) {
+        return false;
+    }
+
+    function checkLDiagonal(x,y) {
+        return false;
+    }
+
+    function checkRDiagonal(x,y) {
+        return false;
+    }
 
     function initGame() {
         status.totalPieces = 0;
-        status.board = [];
         status.player = settings.firstPlayer;
-        status.gameStarted = true;
+        status.active = true;
     }
 
     function play() {
         initGame();
-        
     }
-    
+
     function clamp(x, min, max) {
         return Math.max(min, Math.min(x, max));
     }
