@@ -1,18 +1,28 @@
+const defaults = {
+    boardWidth: 7,
+    boardHeight: 6,
+    firstPlayer: 1,
+    difficulty: 5,
+    vsComputer: true,
+};
+
+var tableheaders = ["Name", "Wins", "Losses", "Ties"];
+
+const colors = {
+    1: "red",
+    2: "yellow",
+}
+
+/*const EASY = 2;
+const NORMAL = 5;
+const HARD = 8;*/
+
 window.onload = function () {
 
-    var EASY = 2;
-    var NORMAL = 5;
-    var HARD = 8;
     var TIE;
     var OVERLAY_OPEN = false;
-
-    var defaults = {
-        boardWidth: 7,
-        boardHeight: 6,
-        firstPlayer: 1,
-        difficulty: 5,
-        vsComputer: true,
-    }
+    
+    var leaderboard = {}
 
     var settings = {
         boardWidth: 7,
@@ -21,13 +31,6 @@ window.onload = function () {
         difficulty: 5,
         vsComputer: true,
     };
-
-    var colors = {
-        1: "red",
-        2: "yellow",
-    }
-    
-    var tableheaders = ["Name", "Wins", "Losses", "Ties"];
 
     var status = {
         board: new Array(),
@@ -39,7 +42,6 @@ window.onload = function () {
         lastPlayed: 0,
     };
 
-    var leaderboard = {}
 
     loadSettings(defaults);
     init();
@@ -254,6 +256,7 @@ window.onload = function () {
     }
 
     function doWin() {
+        status.active = false;
         updateBanner();
         if (status.player == 1) {
             leaderboard[status.playername].wins++;
@@ -383,7 +386,10 @@ window.onload = function () {
     function updateBanner() {
         let banner = document.getElementById("banner");
         banner.display = "block";
-        banner.innerText = status.playername + " wins!";
+        if (status.player == 2 )
+            banner.innerText = "The computer wins!";
+        else 
+            banner.innerText = status.playername + " wins!";
 		banner.style.background = colors[status.player];
     }
 

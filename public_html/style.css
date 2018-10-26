@@ -45,6 +45,11 @@ body {
     cursor: pointer;
 }
 
+#help p {
+    padding: 2%;
+    text-align: justify;
+}
+
 #scoretable {
     border: 1px solid #FFFFFF;
     width: 100%;
