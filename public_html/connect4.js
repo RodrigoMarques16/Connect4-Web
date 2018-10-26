@@ -1,11 +1,10 @@
-/*
-for(let i = 0; i < height; i++) {
-    for (let j = 0; j < width; j++) {
-        console.log(cells[j+","+i]);
-    }
-}*/
-
 window.onload = function () {
+
+    var EASY = 2;
+    var NORMAL = 5;
+    var HARD = 8;
+    var TIE;
+    var OVERLAY_OPEN = false;
 
     var defaults = {
         boardWidth: 7,
@@ -15,16 +14,6 @@ window.onload = function () {
         vsComputer: true,
     }
 
-    var colors = {
-        1: "red",
-        2: "yellow",
-    }
-    
-    var EASY = 2;
-    var NORMAL = 5;
-    var HARD = 8;
-    var TIE;
-
     var settings = {
         boardWidth: 7,
         boardHeight: 6,
@@ -32,6 +21,13 @@ window.onload = function () {
         difficulty: 5,
         vsComputer: true,
     };
+
+    var colors = {
+        1: "red",
+        2: "yellow",
+    }
+    
+    var tableheaders = ["Name", "Wins", "Losses", "Ties"];
 
     var status = {
         board: new Array(),
@@ -47,85 +43,108 @@ window.onload = function () {
 
     loadSettings(defaults);
     init();
-    createBoard(settings.boardWidth, settings.boardHeight);   
+    createBoard(settings.boardWidth, settings.boardHeight);
     play();
 
     function init() {
+        document.getElementById("login-button").onclick = login;
+        document.getElementById("playGame").onclick = startGame;
+        document.getElementById("showHelp").onclick = showHelp;
+        document.getElementById("showScores").onclick = showScores;
+        document.getElementById("giveup").onclick = giveUp;
+        document.getElementById("overlay").onclick = closeOverlay;
+    }
 
-        document.getElementById("login-button").onclick = function() {
-            status.playername = document.getElementById("username-box").value;
-            //let password = document.getElementById("password-box").value; 
-            document.getElementById("login-section").style.display = "none";
-            document.getElementById("side").style.display = "block";
-            document.getElementById("game").style.display = "block";
-            if (!(status.playername in leaderboard)) {
-                leaderboard[status.playername] = {
-                    wins: 0,
-                    losses: 0,
-                    ties: 0,
-                }
+    function login() {
+        status.playername = document.getElementById("username-box").value;
+        //let password = document.getElementById("password-box").value; 
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("side").style.display = "block";
+        document.getElementById("game").style.display = "block";
+        if (!(status.playername in leaderboard)) {
+            leaderboard[status.playername] = {
+                wins: 0,
+                losses: 0,
+                ties: 0,
             }
         }
+    }
 
-        document.getElementById("playGame").onclick = function() {
-            settings.boardWidth  = clamp(parseInt(document.getElementById("boardWidth").value), 1, 10);
-            settings.boardHeight = clamp(parseInt(document.getElementById("boardHeight").value), 1, 10);
-            settings.firstPlayer = parseInt(document.getElementById("firstPlayer").value);
-            settings.difficulty  = parseInt(document.getElementById("difficulty").value);
-            loadSettings(settings);
-            clearBoard();
-            createBoard(settings.boardWidth, settings.boardHeight);
-            play();
-        }
+    function startGame() {
+        settings.boardWidth  = clamp(parseInt(document.getElementById("boardWidth").value), 1, 10);
+        settings.boardHeight = clamp(parseInt(document.getElementById("boardHeight").value), 1, 10);
+        settings.firstPlayer = parseInt(document.getElementById("firstPlayer").value);
+        settings.difficulty  = parseInt(document.getElementById("difficulty").value);
+        loadSettings(settings);
+        clearBoard();
+        createBoard(settings.boardWidth, settings.boardHeight);
+        play();
+    }
 
-        document.getElementById("showHelp").onclick = function() {
-            document.getElementById("scores").style.display  = "none";
-            document.getElementById("overlay").style.display = "block";
-            document.getElementById("help").style.display    = "block";
-        }
-
-        document.getElementById("showScores").onclick = function() {
-            document.getElementById("help").style.display     = "none";
-            document.getElementById("overlay").style.display  = "block";
-            let scores = document.getElementById("scores");
-            scores.style.display = "block";
-            
-            while (scores.firstChild) {
-                scores.removeChild(scores.firstChild);
-            }
-            
-            let header = document.createElement("h1");
-            header.innerText = "Scoreboard";
-            scores.appendChild(header);
-            
-            let table = document.createElement("table");
-            for (let username in leaderboard) {
-                let tr = document.createElement("tr");
-                let name = document.createElement("td");
-                name.innerText = "Name: " + username;
-                tr.appendChild(name);
-                let score = leaderboard[username];
-                for(let field in score) {
-                    let td = document.createElement("td");
-                    td.innerText = field + ": " + score[field];
-                    tr.appendChild(td);
-                }
-                table.appendChild(tr)
-            }
-            
-            table.align = "center";
-            table.id = "scoretable";
-            scores.appendChild(table);
-        }
-
-        document.getElementById("closeHelp").onclick = function() {
+    function showHelp() {
+        if (OVERLAY_OPEN == true) {
             document.getElementById("overlay").style.display = "none";
+            OVERLAY_OPEN = false;
+            return;
+        }
+        document.getElementById("scores").style.display  = "none";
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("help").style.display    = "block";
+        OVERLAY_OPEN = true;
+    }
+
+    function showScores() {
+        if (OVERLAY_OPEN == true) {
+            document.getElementById("overlay").style.display = "none";
+            OVERLAY_OPEN = false;
+            return;
         }
 
-        document.getElementById("overlay").onclick = function() {
-            this.style.display = "none";
+        document.getElementById("help").style.display     = "none";
+        document.getElementById("overlay").style.display  = "block";
+        let scores = document.getElementById("scores");
+        scores.style.display = "block";
+        
+        while (scores.firstChild) {
+            scores.removeChild(scores.firstChild);
+        }
+        
+        let header = document.createElement("h1");
+        header.innerText = "Scoreboard";
+        scores.appendChild(header);
+        
+        let table = document.createElement("table");
+        
+        let thead = document.createElement("thead");
+        for(field in tableheaders) {
+            let th = document.createElement("th");
+            th.innerText = tableheaders[field];
+            thead.appendChild(th);
+        }
+        table.appendChild(thead);
+
+        for (let username in leaderboard) {
+            let tr = document.createElement("tr");
+            let name = document.createElement("td");
+            name.innerText = username;
+            tr.appendChild(name);
+            let score = leaderboard[username];
+            for(let field in score) {
+                let td = document.createElement("td");
+                td.innerText = score[field];
+                tr.appendChild(td);
+            }
+            table.appendChild(tr)
         }
 
+        table.align = "center";
+        table.id = "scoretable";
+        scores.appendChild(table);
+        OVERLAY_OPEN = true;
+    }
+
+    function closeOverlay() {
+        document.getElementById("overlay").style.display = "none";
     }
     
     function loadSettings(table) {
@@ -149,7 +168,6 @@ window.onload = function () {
         
         clearBoard();
 
-        // Initialize game board
         for(let x = 0; x < width; x++) {
             status.columnHeight[x] = 0;
             status.board[x] = new Array();
@@ -158,7 +176,6 @@ window.onload = function () {
 			}
         }
 
-        // Create HTML board
         for(let y = 0; y < height; y++) {
             let tr = document.createElement("tr");
 			for (let x = 0; x < width; x++) {
@@ -169,7 +186,6 @@ window.onload = function () {
 			table.appendChild(tr);
         }
 
-        // Events
         table.onclick = function(e){
             if("cellIndex" in e.target && status.active == true)
 			    columnDrop(e.target.cellIndex);
@@ -211,7 +227,6 @@ window.onload = function () {
 	}      
 
     function columnDrop(c) {
-        //console.log("Column " + c);
         
 		if (status.columnHeight[c] == settings.boardHeight) {
             return false;
@@ -251,6 +266,13 @@ window.onload = function () {
         leaderboard[names[status.player]].ties++;
     }
 
+    function giveUp() {
+        if (status.active) {
+            status.player = (status.player == 1 ? 2 : 1);
+            doWin();
+        }
+    }
+
     function changePlayer() {
         status.player = (status.player == 1 ? 2 : 1);
         if (settings.vsComputer == true && status.player == 2)
@@ -268,14 +290,7 @@ window.onload = function () {
                 available.push(i);
 
         let c = available[getRandomInt(0, available.length-1)];
-        /*
-        if (settings.difficulty == EASY)
-            c = getRandomColumn(0, settings.boardWidth);
-        else if (settings.difficulty == NORMAL)
-            c = getRandomColumn(status.lastPlayed-3, status.lastPlayed+3);
-        else 
-            c = getRandomColumn(status.lastPlayed-1, status.lastPlayed+1);
-        */
+
         columnDrop(c);
     }
 
@@ -341,9 +356,7 @@ window.onload = function () {
             y--;
         }
         let win = 0;
-        console.log(i,j,"to",x,y);
         for(; i < settings.boardWidth && j >= y; i++, j--) {
-            console.log("ij", i, j)
             if (status.board[i][j] == status.player)
                 win++;
             else
@@ -365,7 +378,6 @@ window.onload = function () {
         initGame();
         if (status.player == 2)
             makeMove();
-
     }
 
     function updateBanner() {
@@ -375,18 +387,4 @@ window.onload = function () {
 		banner.style.background = colors[status.player];
     }
 
-
-    function clamp(x, min, max) {
-        return Math.max(min, Math.min(x, max));
-    }
-
-    function getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    function getRandomColumn(min, max) {
-        return clamp(getRandomInt(min,max), 0, settings.boardWidth-1);
-    }
-
 }
-

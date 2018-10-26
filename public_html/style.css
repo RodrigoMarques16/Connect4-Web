@@ -45,8 +45,17 @@ body {
     cursor: pointer;
 }
 
-#scoretable td,tr {
+#scoretable {
+    border: 1px solid #FFFFFF;
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
 }
+#scoretable td, th {
+    border: 1px solid #FFFFFF;
+    padding: 5px 2px;
+}
+
 
 /****************************
  * GAME
