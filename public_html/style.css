@@ -10,9 +10,14 @@ body {
 /****************************
  * GAME
  ***************************/
-#board {
+#game {
     display: none;
     margin-left: 15%;
+    width: 85%;
+}
+
+#board {
+    position: inherit;
 }
 
 #board table {
@@ -22,7 +27,7 @@ body {
 }
 
 #board td, #board tr, #board table{
-	border: 1px solid;
+    border: 1px solid;
 	border-collapse: collapse;
 }
 
@@ -31,6 +36,20 @@ body {
     border-style: solid;
     background: white;
 }
+
+#banner{
+    position: absolute;
+    width: 84%;
+    top: 15%;
+    font-size: 5vh;
+    text-align: center;
+    color: #FFFFFF;
+    background: black;
+	pointer-events: none;
+	/*border: 3px solid black;*/
+	z-index: 1;
+}
+
 
 /****************************
  * SIDE BAR
@@ -44,6 +63,7 @@ body {
     min-width: 150px;
     max-width: 250px;
     padding-top: 20px;
+    z-index: 2;
 }
 
 .input-number, .input-select {
