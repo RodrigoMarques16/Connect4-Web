@@ -1,0 +1,40 @@
+#game {
+    display: none;
+    margin-left: 15%;
+    width: 85%;
+}
+
+#board {
+    position: inherit;
+}
+
+#board table {
+    position: inherit;
+    background: blue;
+    margin: auto;
+}
+
+#board td, #board tr, #board table{
+    border: 1px solid;
+	border-collapse: collapse;
+}
+
+#board td {
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    background: white;
+}
+
+#banner{
+    position: absolute;
+    width: 84%;
+    top: 15%;
+    font-size: 5vh;
+    text-align: center;
+    color: black;
+    background: black;
+	pointer-events: none;
+	/*border: 3px solid black;*/
+	z-index: 1;
+}
