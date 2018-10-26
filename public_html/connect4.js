@@ -53,17 +53,13 @@ window.onload = function () {
     function init() {
 
         document.getElementById("login-button").onclick = function() {
-            let username = document.getElementById("username-box").value;
-            let password = document.getElementById("password-box").value; 
-            let login    = document.getElementById("login-section");
-            let settings = document.getElementById("side");
-            let game     = document.getElementById("game");
-            login.style.display = "none"; 
-            settings.style.display = "block"
-            game.style.display  = "block";
-            status.playername = username;
-            if (!(username in leaderboard)) {
-                leaderboard[username] = {
+            status.playername = document.getElementById("username-box").value;
+            //let password = document.getElementById("password-box").value; 
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("side").style.display = "block";
+            document.getElementById("game").style.display = "block";
+            if (!(status.playername in leaderboard)) {
+                leaderboard[status.playername] = {
                     wins: 0,
                     losses: 0,
                     ties: 0,
@@ -71,7 +67,7 @@ window.onload = function () {
             }
         }
 
-        document.getElementById("playGame").onclick = function(){
+        document.getElementById("playGame").onclick = function() {
             settings.boardWidth  = clamp(parseInt(document.getElementById("boardWidth").value), 1, 10);
             settings.boardHeight = clamp(parseInt(document.getElementById("boardHeight").value), 1, 10);
             settings.firstPlayer = parseInt(document.getElementById("firstPlayer").value);
@@ -81,6 +77,55 @@ window.onload = function () {
             createBoard(settings.boardWidth, settings.boardHeight);
             play();
         }
+
+        document.getElementById("showHelp").onclick = function() {
+            document.getElementById("scores").style.display  = "none";
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("help").style.display    = "block";
+        }
+
+        document.getElementById("showScores").onclick = function() {
+            document.getElementById("help").style.display     = "none";
+            document.getElementById("overlay").style.display  = "block";
+            let scores = document.getElementById("scores");
+            scores.style.display = "block";
+            
+            while (scores.firstChild) {
+                scores.removeChild(scores.firstChild);
+            }
+            
+            let header = document.createElement("h1");
+            header.innerText = "Scoreboard";
+            scores.appendChild(header);
+            
+            let table = document.createElement("table");
+            for (let username in leaderboard) {
+                let tr = document.createElement("tr");
+                let name = document.createElement("td");
+                name.innerText = "Name: " + username;
+                tr.appendChild(name);
+                let score = leaderboard[username];
+                for(let field in score) {
+                    let td = document.createElement("td");
+                    td.innerText = field + ": " + score[field];
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr)
+            }
+            
+            table.align = "center";
+            table.id = "scoretable";
+            scores.appendChild(table);
+        }
+
+        document.getElementById("closeHelp").onclick = function() {
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        document.getElementById("overlay").onclick = function() {
+            this.style.display = "none";
+        }
+
     }
     
     function loadSettings(table) {
@@ -92,6 +137,7 @@ window.onload = function () {
     
     function clearBoard() {
         document.getElementById("board").innerHTML = "";
+        document.getElementById("banner").innerText = "";
         status.board = new Array();
         status.columnHeight = new Array();
         cells = {};
@@ -125,10 +171,11 @@ window.onload = function () {
 
         // Events
         table.onclick = function(e){
-            if("cellIndex" in e.target)
+            if("cellIndex" in e.target && status.active == true)
 			    columnDrop(e.target.cellIndex);
 			e.preventDefault();
         }
+
         /*
         table.onmouseover = function(e) {
             unhighlightColumn();
@@ -166,10 +213,6 @@ window.onload = function () {
     function columnDrop(c) {
         //console.log("Column " + c);
         
-        if (status.player == 1 && !status.active ) {
-            return false;
-        }
-        
 		if (status.columnHeight[c] == settings.boardHeight) {
             return false;
         }
@@ -190,9 +233,8 @@ window.onload = function () {
         } else if (checkWin(c, y)) {
             doWin(); 
         } else {
-            changePlayer();
             status.lastPlayed = c;
-            status.active = true;
+            changePlayer();
         }
     }
 
@@ -213,23 +255,27 @@ window.onload = function () {
         status.player = (status.player == 1 ? 2 : 1);
         if (settings.vsComputer == true && status.player == 2)
             makeMove();
+        if (status.player == 1) 
+            status.active = true;
     }
 
     function makeMove() {
         status.active = false;
-        available = new Array();
-        for(let i = 0; i < settings.boardWidth; i++) {
+
+        let available = new Array();
+        for(let i = 0; i < settings.boardWidth; i++)
             if (status.columnHeight[i] < settings.boardHeight)
                 available.push(i);
-        }
-        let c;
+
+        let c = available[getRandomInt(0, available.length-1)];
+        /*
         if (settings.difficulty == EASY)
             c = getRandomColumn(0, settings.boardWidth);
         else if (settings.difficulty == NORMAL)
             c = getRandomColumn(status.lastPlayed-3, status.lastPlayed+3);
         else 
             c = getRandomColumn(status.lastPlayed-1, status.lastPlayed+1);
-        console.log("ai played at", c);
+        */
         columnDrop(c);
     }
 
@@ -288,16 +334,16 @@ window.onload = function () {
 
     function checkLDiagonal(x,y) {
         let i = x, j = y;
-        while(i > 0 && j < settings.boardHeight-1) {
+        while(i > 0 && j < settings.boardHeight) {
             i--; j++;
         }
-        while(x < settings.boardWidth && y > 0) {
-            x++; y--;
+        while(y > 0) {
+            y--;
         }
-        console.log("ij", i,j,"to xy",x,y);
         let win = 0;
-        for(; i < x && j >= y; i++, j--) {
-            console.log(i,j);
+        console.log(i,j,"to",x,y);
+        for(; i < settings.boardWidth && j >= y; i++, j--) {
+            console.log("ij", i, j)
             if (status.board[i][j] == status.player)
                 win++;
             else
@@ -324,9 +370,9 @@ window.onload = function () {
 
     function updateBanner() {
         let banner = document.getElementById("banner");
+        banner.display = "block";
         banner.innerText = status.playername + " wins!";
 		banner.style.background = colors[status.player];
-        console.log(colors[status.player]);
     }
 
 
@@ -339,7 +385,6 @@ window.onload = function () {
     }
 
     function getRandomColumn(min, max) {
-        console.log("hi", min, max, clamp(-1,min,max));
         return clamp(getRandomInt(min,max), 0, settings.boardWidth-1);
     }
 

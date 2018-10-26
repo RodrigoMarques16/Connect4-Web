@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8" />
@@ -11,10 +11,8 @@
 </head>
 
 <body>
-  <!-------------------------------------------------------
-  --- LOGIN -----------------------------------------------
-  -------------------------------------------------------->
-  <section id="login-section">
+
+  <div id="login-section">
     <div class="login-area">
       <h1> Connect 4</h1>
       <div class="login-form">
@@ -24,11 +22,9 @@
         <button id="register-button">register</button>
       </div>
     </div>
-  </section>
-  <!-------------------------------------------------------
-  --- SETTINGS --------------------------------------------
-  -------------------------------------------------------->
-  <section id="side" class="side-bar">
+  </div>
+
+  <div id="side" class="side-bar">
     <table id="settings">
       <tr><td>Board Width:<td><input id="boardWidth" type="number" class="input-number"/></td></tr>
       <tr><td>Board Height:<td><input id="boardHeight" type="number" class="input-number"/></td></tr>
@@ -37,20 +33,26 @@
         <option value=2>2</option>
       </select></td></tr>
       <tr><td>Difficulty:<td><select id="difficulty" class="input-select">
-      <option value=2>Easy</option>
-      <option value=5>Normal</option>
-      <option value=8>Hard</option>
+        <option value=2>Easy</option>
+        <option value=5>Normal</option>
+        <option value=8>Hard</option>
       </select></td></tr>
       <tr><td colspan="2"><button id="playGame" class="input-button">Play</button></td></tr>
       <tr><td colspan="2"><button id="resetSettings" class="input-button">Reset</button></td></tr>
-      <tr><td colspan="2"><button id="scoreboard" class="input-button">Scoreboard</button></td></tr>
-      <tr><td colspan="2"><button id="help" class="input-button">Help</button></td></tr>
+      <tr><td colspan="2"><button id="showScores" class="input-button">Scoreboard</button></td></tr>
+      <tr><td colspan="2"><button id="showHelp" class="input-button">Help</button></td></tr>
     </table>
-  </section>
-  <!-------------------------------------------------------
-  --- GAME ------------------------------------------------
-  -------------------------------------------------------->
+  </div>
+
   <div id="game">
+    <div id="overlay" class="overlay">
+      <div id="help" class="pop-up">
+        <span class="close" id="closeHelp">&times;</span>
+        <h1>Instructions</h1>
+        <p>Click on the board.</p>
+      </div>
+      <div id="scores" class="pop-up"></div>
+    </div> 
     <div id="banner"></div>
     <div id="board"></div>
   </div>
