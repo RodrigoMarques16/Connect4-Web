@@ -1,3 +1,5 @@
+const server = "http://twserver.alunos.dcc.fc.up.pt:8008/"
+
 const defaults = {
     boardWidth: 7,
     boardHeight: 6,
@@ -13,9 +15,9 @@ const colors = {
     2: "yellow",
 }
 
-/*const EASY = 2;
-const NORMAL = 5;
-const HARD = 8;*/
+//const EASY = 2;
+//const NORMAL = 5;
+// const HARD = 8;
 
 window.onload = function () {
 
@@ -50,6 +52,7 @@ window.onload = function () {
 
     function init() {
         document.getElementById("login-button").onclick = login;
+        document.getElementById("register-button").onclick = register;
         document.getElementById("playGame").onclick = startGame;
         document.getElementById("showHelp").onclick = showHelp;
         document.getElementById("showScores").onclick = showScores;
@@ -58,18 +61,31 @@ window.onload = function () {
     }
 
     function login() {
-        status.playername = document.getElementById("username-box").value;
-        //let password = document.getElementById("password-box").value; 
-        document.getElementById("login-section").style.display = "none";
-        document.getElementById("side").style.display = "block";
-        document.getElementById("game").style.display = "block";
-        if (!(status.playername in leaderboard)) {
-            leaderboard[status.playername] = {
-                wins: 0,
-                losses: 0,
-                ties: 0,
+        let user_box = document.getElementById("username-box");
+        let pw_box = document.getElementById("password-box");
+
+        status.playername = user_box.value;
+        let password = pw_box.value;
+
+        let credentials = {
+            nick: status.playername,
+            pass: password
+        };
+
+        makeRequest("POST", "register", credentials, (response) => {
+            if ('error' in response) {
+                user_box.value = response.error;
             }
-        }
+            else {
+                document.getElementById("login-section").style.display = "none";
+                document.getElementById("side").style.display = "block";
+                document.getElementById("game").style.display = "block";
+            }
+        });
+    }
+
+    function register() {
+        login();
     }
 
     function startGame() {
