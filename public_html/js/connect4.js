@@ -15,8 +15,8 @@ const colors = {
     2: "yellow",
 }
 
-//const EASY = 2;
-//const NORMAL = 5;
+// const EASY = 2;
+// const NORMAL = 5;
 // const HARD = 8;
 
 window.onload = function () {
@@ -40,15 +40,12 @@ window.onload = function () {
         player: 1,
         playername: "",
         active: false,
-        totalPieces: 0,
         lastPlayed: 0,
     };
 
 
     loadSettings(defaults);
     init();
-    createBoard(settings.boardWidth, settings.boardHeight);
-    play();
 
     function init() {
         document.getElementById("login-button").onclick = login;
@@ -80,6 +77,13 @@ window.onload = function () {
                 document.getElementById("login-section").style.display = "none";
                 document.getElementById("side").style.display = "block";
                 document.getElementById("game").style.display = "block";
+                if (!(status.playername in leaderboard)) {
+                    leaderboard[status.playername] = {
+                        wins: 0,
+                        losses: 0,
+                        ties: 0,
+                    }
+                }
             }
         });
     }
@@ -175,8 +179,6 @@ window.onload = function () {
     function clearBoard() {
         document.getElementById("board").innerHTML = "";
         document.getElementById("banner").innerText = "";
-        status.board = new Array();
-        status.columnHeight = new Array();
         cells = {};
     }
 
@@ -184,16 +186,6 @@ window.onload = function () {
         let board = document.getElementById("board");
         let table = document.createElement("table");
         
-        clearBoard();
-
-        for(let x = 0; x < width; x++) {
-            status.columnHeight[x] = 0;
-            status.board[x] = new Array();
-            for (let y = 0; y < height; y++) {
-				status.board[x].push(0);
-			}
-        }
-
         for(let y = 0; y < height; y++) {
             let tr = document.createElement("tr");
 			for (let x = 0; x < width; x++) {
@@ -245,28 +237,20 @@ window.onload = function () {
 	}      
 
     function columnDrop(c) {
-        
-		if (status.columnHeight[c] == settings.boardHeight) {
-            return false;
-        }
-        
         status.active = false;
+        
+        let y = status.board.columnHeight[c];
+        if (status.board.columnDrop(status.player, c) == false)
+            return false;
 
-        let y = status.columnHeight[c];
         let key = c + "," + y
-
         cells[key].style.background = colors[status.player];
-        status.board[c][y] = status.player;
 
-        status.columnHeight[c]++;
-        status.totalPieces++;
-
-        if (status.totalPieces >= TIE) {
+        if (status.board.totalPieces >= TIE) {
             doTie();
-        } else if (checkWin(c, y)) {
+        } else if (status.board.checkWin(status.player, c, y)) {
             doWin(); 
         } else {
-            status.lastPlayed = c;
             changePlayer();
         }
     }
@@ -305,7 +289,7 @@ window.onload = function () {
 
         let available = new Array();
         for(let i = 0; i < settings.boardWidth; i++)
-            if (status.columnHeight[i] < settings.boardHeight)
+            if (status.board.columnHeight[i] < status.board.height)
                 available.push(i);
 
         let c = available[getRandomInt(0, available.length-1)];
@@ -313,88 +297,15 @@ window.onload = function () {
         columnDrop(c);
     }
 
-    function checkWin(x, y) {
-        return (checkHorizontal(y)) 
-            || (checkVertical(x))
-            || (checkLDiagonal(x,y))
-            || (checkRDiagonal(x,y));
-    }
-
-    function checkHorizontal(y) {
-        let win = 0;
-        for(let i = 0; i < settings.boardWidth; i++) {
-            if (status.board[i][y] == status.player)
-                win++;
-            else 
-                win = 0;
-            if (win >= 4) 
-                return true;
-        }
-        return false;
-    }
-
-    function checkVertical(x) {
-        let win = 0;
-        for(let i = 0; i < settings.boardHeight; i++) {
-            if (status.board[x][i] == status.player)
-                win++;
-            else 
-                win = 0;
-            if (win >= 4) 
-                return true;
-        }
-        return false;     
-    }
-
-    function checkRDiagonal(x,y) {
-        let i = x, j = y;
-        while(i > 0 && j > 0) {
-            i--; j--;
-        }
-        while(x < settings.boardWidth && y < settings.boardHeight) {
-            x++; y++;
-        }
-        let win = 0;
-        for(; i < x && j < y; i++, j++) {
-            if (status.board[i][j] == status.player)
-                win++;
-            else
-                win = 0;
-            if (win >= 4)
-                return true;
-        }
-        return false;   
-    }
-
-    function checkLDiagonal(x,y) {
-        let i = x, j = y;
-        while(i > 0 && j < settings.boardHeight) {
-            i--; j++;
-        }
-        while(y > 0) {
-            y--;
-        }
-        let win = 0;
-        for(; i < settings.boardWidth && j >= y; i++, j--) {
-            if (status.board[i][j] == status.player)
-                win++;
-            else
-                win = 0;
-            if (win >= 4)
-                return true;
-        }
-        return false;   
-    }
-
     function initGame() {
-        status.totalPieces = 0;
+        status.board = new Board(settings.boardWidth, settings.boardHeight, settings.firstPlayer);
         status.player = settings.firstPlayer;
         status.active = true;
         TIE = settings.height * settings.width;
     }
 
     function play() {
-        initGame();
+        initGame();        
         if (status.player == 2)
             makeMove();
     }
