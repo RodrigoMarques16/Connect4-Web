@@ -9,5 +9,12 @@ function makeRequest(method, command, data, callback) {
         callback(JSON.parse(xhr.responseText))
     }
     xhr.open(method, `http://${host}:${port}/${command}`);
-    xhr.send(JSON.stringify(data))
+    xhr.send(JSON.stringify(data));
+    console.log(`sent ${command} to server`);
+}
+
+function getListener(nick, game, callback) {
+    eventSource = new EventSource(`http://${host}:${port}/update?nick=${nick}&game=${game}`);
+    eventSource.onmessage = callback;
+    return eventSource;
 }
