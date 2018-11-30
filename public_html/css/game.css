@@ -26,15 +26,22 @@
     background: white;
 }
 
-#banner{
+#banner {
     position: absolute;
     width: 84%;
     top: 15%;
     font-size: 5vh;
     text-align: center;
+    border-radius: 17.5px;
     color: black;
     background: black;
+    opacity: 0.9;
 	pointer-events: none;
 	/*border: 3px solid black;*/
 	z-index: 1;
+}
+
+#spinner {
+    float:right;
+    height: 30px;
 }

@@ -8,7 +8,12 @@ const defaults = {
     vsComputer: false,
 };
 
-var tableheaders = ["Name", "Wins", "Losses", "Ties"];
+var tableheaders = [
+    "Name", 
+    "Victories", 
+    "Games", 
+    //"Ties"
+];
 
 const colors = {
     1: "red",
@@ -44,6 +49,10 @@ window.onload = function () {
         lastPlayed: 0,
     };
 
+    const spinnerCanvas = document.getElementById("spinner");
+    const context = spinnerCanvas.getContext("2d");
+    const lines = 15;
+    var spinner;
 
     loadSettings(defaults);
     init();
@@ -60,7 +69,6 @@ window.onload = function () {
         document.getElementById("giveup").onclick = giveUp;
         document.getElementById("overlay").onclick = closeOverlay;
     }
-
 
     /**
      * Authentication
@@ -130,6 +138,7 @@ window.onload = function () {
                 
                 eventSource = getListener(status.playername, status.game, onUpdate);
                 updateBanner("Waiting for another player...", "green");
+                drawSpinner();
 
                 play();
             }
@@ -154,13 +163,7 @@ window.onload = function () {
     /**
      * Open the score table overlay
      */
-    function showScores() {
-        if (OVERLAY_OPEN == true) {
-            document.getElementById("overlay").style.display = "none";
-            OVERLAY_OPEN = false;
-            return;
-        }
-
+    function drawScores(leaderboard) {
         document.getElementById("help").style.display = "none";
         document.getElementById("overlay").style.display = "block";
         let scores = document.getElementById("scores");
@@ -184,33 +187,59 @@ window.onload = function () {
         }
         table.appendChild(thead);
 
-        for (let username in leaderboard) {
+        for (let row of leaderboard) {
             let tr = document.createElement("tr");
-            let name = document.createElement("td");
-            name.innerText = username;
-            tr.appendChild(name);
-            let score = leaderboard[username];
-            for (let field in score) {
+            console.log(row);
+
+            for (let field in row) {
                 let td = document.createElement("td");
-                td.innerText = score[field];
+                td.innerText = row[field];
                 tr.appendChild(td);
             }
+
             table.appendChild(tr)
         }
 
         table.align = "center";
         table.id = "scoretable";
         scores.appendChild(table);
+
         OVERLAY_OPEN = true;
     }
 
     /**
-     * Closes the open overlay
+     * Request rankings from the server
      */
-    function closeOverlay() {
-        document.getElementById("overlay").style.display = "none";
+    function showScores() {
+        if (closeOverlay()) return;
+
+        let data = {
+            size: {
+                rows: settings.boardHeight,
+                columns: settings.boardWidth
+            }
+        }
+        makeRequest("POST", "ranking", data, (response) => {
+            if ("error" in response) {
+                // error stuff
+            } else {
+                console.log(response.ranking);
+                drawScores(response.ranking);
+            }
+        });
     }
 
+    /**
+     * Close the overlay if it's open
+     */
+    function closeOverlay() {
+        if (OVERLAY_OPEN == true) {
+            document.getElementById("overlay").style.display = "none";
+            OVERLAY_OPEN = false;
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Load settings to the page
@@ -352,7 +381,7 @@ window.onload = function () {
         } else {
             updateBanner("Other player wins!", colors[2]);
         }
-        eventSource.close();
+        endGame();
     }
 
     /**
@@ -367,15 +396,21 @@ window.onload = function () {
     function giveUp() {
         let data = {
             game: status.game,
-            nick: status.playername
+            nick: status.playername,
+            pass: status.password
         };
 
         makeRequest("POST", "leave", data, (response) => {
-            if ("error" in reponse) {
+            if ("error" in response) {
                 // error stuff
-            } else {
-                status.player = 2;
-                doWin();
+            } else { 
+                if (gameStarted == true) {
+                    status.player = 2;
+                    doWin();
+                } else {
+                    gameStarted = false;
+                    clearBoard();
+                }
             }
         });
     }
@@ -383,13 +418,14 @@ window.onload = function () {
     /**
      * Switch active players
      */
+    /*
     function changePlayer() {
         status.player = (status.player == 1 ? 2 : 1);
         if (settings.vsComputer == true && status.player == 2)
             makeMove();
         if (status.player == 1)
             status.active = true;
-    }
+    }*/
 
     /**
      * Set the active player
@@ -397,11 +433,15 @@ window.onload = function () {
      */
     function changePlayer(playerName) {
         if (playerName == status.playername) {
+            console.log("local player's turn");
             status.player = 1;
             status.active = true;
+            stopSpinner();
             updateBanner("Your turn.", colors[1]);
         }
         else {
+            console.log("remote player's turn");
+            drawSpinner();
             status.player = 2;
             updateBanner(playerName + "'s turn.", colors[2]);
         }
@@ -481,12 +521,13 @@ window.onload = function () {
             // error stuff
         } else {
             if (status.gameStarted == false){
-                status.gameStarted = true;
                 console.log("Other player connected");
+                status.gameStarted = true;
             }
-
+            
             if ("turn" in data) {
                 changePlayer(data.turn);
+                
                 if ("column" in data && data.turn != status.playername)
                     status.board.columnDrop(status.player, data.column);
             }
@@ -506,4 +547,55 @@ window.onload = function () {
     function getKey(x, y) {
         return x + "," + y;
     }
+
+    var spinning = false;
+
+    function stopSpinner() {
+        console.log("stop spinning");
+        window.clearInterval(spinner);
+        context.clearRect(0, 0, spinnerCanvas.width, spinnerCanvas.height);
+        spinning = false;
+    }
+
+    function drawSpinner() {
+        if (spinning) return;
+
+        let start = new Date();
+        let width = context.canvas.width;
+        let height = context.canvas.height;
+
+        console.log("spinning");
+        spinning = true;
+
+        spinner = window.setInterval(() => {
+            let nextTick = new Date() - start;
+            let rotation = ((nextTick / 1000) * lines) / lines;
+
+            context.save();
+
+            context.clearRect(0, 0, width, height);
+            context.translate(width / 2, height / 2);
+            context.rotate(Math.PI * 2 * rotation);
+            
+            for (var i = 0; i < lines; i++) {
+                context.beginPath();
+                context.rotate(Math.PI * 2 / lines);
+                context.moveTo(width / 10, 0);
+                context.lineTo(width / 4, 0);
+                context.lineWidth = width / 30;
+                context.strokeStyle = "rgba(0, 0, 0," + i / lines + ")";
+                context.stroke();
+            }
+
+            context.restore();
+            
+        }, 1000 / 30);
+    }
+
+    function endGame() {
+        gameStarted = false;
+        eventSource.close();
+        stopSpinner();
+    }
 }
+
